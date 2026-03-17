@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishGuard - URL Safety Checker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <h1>PhishGuard</h1>
+            </div>
+            <p class="tagline">Protecting you from malicious URLs</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="search-box">
+                <input type="text" id="url-input" placeholder="Enter URL to check for phishing...">
+                <button id="check-btn">Analyze</button>
+            </div>
+            
+            <div class="result-container hidden">
+                <div class="result-header">
+                    <h2>Safety Analysis</h2>
+                    <div class="url-preview" id="url-preview"></div>
+                </div>
+                
+                <div class="safety-meter">
+                    <div class="meter-container">
+                        <div class="meter-bar" id="meter-bar"></div>
+                        <div class="meter-labels">
+                            <span>0%</span>
+                            <span>25%</span>
+                            <span>50%</span>
+                            <span>75%</span>
+                            <span>100%</span>
+                        </div>
+                    </div>
+                    <div class="safety-status" id="safety-status">
+                        <span id="safety-percentage">0%</span>
+                        <span id="status-text">Safe</span>
+                    </div>
+                </div>
+                
+                <div class="details">
+                    <div class="detail-card">
+                        <i class="fas fa-lock"></i>
+                        <h3>HTTPS Secure</h3>
+                        <p id="https-status">Checking...</p>
+                    </div>
+                    <div class="detail-card">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3>Domain Age</h3>
+                        <p id="domain-age">Checking...</p>
+                    </div>
+                    <div class="detail-card">
+                        <i class="fas fa-link"></i>
+                        <h3>URL Length</h3>
+                        <p id="url-length">Checking...</p>
+                    </div>
+                </div>
+                
+                <div class="recommendation" id="recommendation">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Enter a URL to get safety recommendations</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="animation-area">
+            <div class="bubble bubble-1"></div>
+            <div class="bubble bubble-2"></div>
+            <div class="bubble bubble-3"></div>
+            <div class="bubble bubble-4"></div>
+            <div class="bubble bubble-5"></div>
+        </div>
+    </div>
+    
+    <script src="/static/script.js"></script>
+</body>
+</html>

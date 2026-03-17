@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishGuard — AI Phishing Detection & Prevention</title>
+    <meta name="description" content="PhishGuard uses machine learning to detect phishing URLs and emails in real-time. Protect yourself from cyber threats.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/auth.css">
+</head>
+<body>
+
+<!-- Animated Background -->
+<div class="bg-animation">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+</div>
+
+<div class="container">
+    <!-- User Nav -->
+    <div class="user-nav">
+        <span class="user-greeting">Hi, <strong>{{ user_name }}</strong></span>
+        <a href="/logout" class="logout-btn"><i class="fas fa-right-from-bracket"></i> Logout</a>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-shield-halved"></i>
+            <h1>PhishGuard</h1>
+        </div>
+        <p class="tagline">AI-Powered Phishing Detection & Prevention</p>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav" id="tab-nav">
+        <button class="tab-btn active" data-tab="url-scanner">
+            <i class="fas fa-link"></i> <span>URL Scanner</span>
+        </button>
+        <button class="tab-btn" data-tab="email-analyzer">
+            <i class="fas fa-envelope-open-text"></i> <span>Email Analyzer</span>
+        </button>
+        <button class="tab-btn" data-tab="bulk-scanner">
+            <i class="fas fa-list-check"></i> <span>Bulk Scan</span>
+        </button>
+        <button class="tab-btn" data-tab="prevention">
+            <i class="fas fa-user-shield"></i> <span>Prevention</span>
+        </button>
+        <button class="tab-btn" data-tab="dashboard">
+            <i class="fas fa-chart-line"></i> <span>Dashboard</span>
+        </button>
+    </nav>
+
+    <!-- ====== URL Scanner Tab ====== -->
+    <section class="tab-panel active" id="panel-url-scanner">
+        <div class="glass-card">
+            <div class="search-box">
+                <input type="text" id="url-input" placeholder="Enter URL to analyze (shortened URLs auto-expanded)...">
+                <button class="btn-primary" id="check-btn">
+                    <i class="fas fa-search"></i> Analyze
+                </button>
+            </div>
+
+            <div class="result-container" id="url-result">
+                <div class="result-header">
+                    <h2><i class="fas fa-shield-halved"></i> Safety Analysis</h2>
+                    <div class="url-preview" id="url-preview"></div>
+                </div>
+
+                <!-- Redirect Alert (shown if URL was shortened) -->
+                <div class="redirect-alert hidden" id="redirect-alert">
+                    <i class="fas fa-random"></i>
+                    <div>
+                        <strong>Shortened URL Detected</strong>
+                        <p id="redirect-info"></p>
+                    </div>
+                </div>
+
+                <div class="safety-meter">
+                    <div class="meter-container">
+                        <div class="meter-bar" id="meter-bar"></div>
+                    </div>
+                    <div class="meter-labels">
+                        <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+                    </div>
+                    <div class="safety-status">
+                        <span id="safety-percentage">0%</span>
+                        <span id="status-text">Analyzing</span>
+                    </div>
+                </div>
+
+                <div class="details">
+                    <div class="detail-card">
+                        <i class="fas fa-lock"></i>
+                        <h3>HTTPS Secure</h3>
+                        <p id="https-status">Checking...</p>
+                    </div>
+                    <div class="detail-card">
+                        <i class="fas fa-certificate"></i>
+                        <h3>SSL Certificate</h3>
+                        <p id="ssl-status">Checking...</p>
+                    </div>
+                    <div class="detail-card">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3>Domain Age</h3>
+                        <p id="domain-age">Checking...</p>
+                    </div>
+                    <div class="detail-card">
+                        <i class="fas fa-ruler-horizontal"></i>
+                        <h3>URL Length</h3>
+                        <p id="url-length">Checking...</p>
+                    </div>
+                    <div class="detail-card">
+                        <i class="fas fa-random"></i>
+                        <h3>Redirects</h3>
+                        <p id="redirect-count">Checking...</p>
+                    </div>
+                    <div class="detail-card">
+                        <i class="fas fa-clock"></i>
+                        <h3>Cert Expiry</h3>
+                        <p id="cert-expiry">Checking...</p>
+                    </div>
+                </div>
+
+                <div class="recommendation" id="recommendation">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Enter a URL to get safety recommendations</p>
+                </div>
+
+                <!-- PDF Export Button -->
+                <button class="btn-export" id="export-url-pdf">
+                    <i class="fas fa-file-pdf"></i> Export Report as PDF
+                </button>
+            </div>
+
+            <div class="error-message" id="url-error"></div>
+        </div>
+    </section>
+
+    <!-- ====== Email Analyzer Tab ====== -->
+    <section class="tab-panel" id="panel-email-analyzer">
+        <div class="glass-card">
+            <div class="email-input">
+                <textarea id="email-input" placeholder="Paste the email content here to analyze for phishing indicators...&#10;&#10;Example:&#10;Dear Customer, Your account has been suspended. Click here immediately to verify your identity..."></textarea>
+                <button class="btn-primary" id="email-check-btn" style="width:100%;justify-content:center;">
+                    <i class="fas fa-microscope"></i> Analyze Email
+                </button>
+            </div>
+
+            <div class="email-result" id="email-result">
+                <div class="risk-header">
+                    <div class="risk-score-circle" id="risk-circle">
+                        <span id="risk-score">0</span>
+                    </div>
+                    <div class="risk-label" id="risk-label">Risk Score</div>
+                </div>
+
+                <h3 style="color:var(--text-primary);font-size:0.95rem;margin-bottom:0.75rem;">
+                    <i class="fas fa-flag" style="color:var(--accent-red);"></i> Detected Indicators
+                </h3>
+                <ul class="indicators-list" id="indicators-list"></ul>
+
+                <div class="recommendation" id="email-recommendation">
+                    <i class="fas fa-info-circle"></i>
+                    <p id="email-rec-text">Analysis results will appear here.</p>
+                </div>
+
+                <button class="btn-export" id="export-email-pdf">
+                    <i class="fas fa-file-pdf"></i> Export Report as PDF
+                </button>
+            </div>
+
+            <div class="error-message" id="email-error"></div>
+        </div>
+    </section>
+
+    <!-- ====== Bulk Scanner Tab ====== -->
+    <section class="tab-panel" id="panel-bulk-scanner">
+        <div class="glass-card">
+            <div class="email-input">
+                <textarea id="bulk-input" placeholder="Enter multiple URLs (one per line, max 20):&#10;&#10;https://google.com&#10;https://bit.ly/xyz123&#10;http://suspicious-site.xyz/login&#10;https://github.com"></textarea>
+                <button class="btn-primary" id="bulk-check-btn" style="width:100%;justify-content:center;">
+                    <i class="fas fa-layer-group"></i> Scan All URLs
+                </button>
+            </div>
+
+            <div class="bulk-result hidden" id="bulk-result">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+                    <h3 style="color:var(--text-primary);font-size:1rem;margin:0;">
+                        <i class="fas fa-list-check" style="color:var(--accent-cyan);"></i> Bulk Scan Results
+                        <span id="bulk-summary" style="font-weight:400;font-size:0.8rem;color:var(--text-muted);margin-left:0.5rem;"></span>
+                    </h3>
+                    <button class="btn-export" id="export-bulk-pdf" style="margin:0;">
+                        <i class="fas fa-file-pdf"></i> Export PDF
+                    </button>
+                </div>
+                <div class="history-table-wrap">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>URL</th>
+                                <th>Result</th>
+                                <th>Safety</th>
+                                <th>Shortened?</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bulk-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="error-message" id="bulk-error"></div>
+        </div>
+    </section>
+
+    <!-- ====== Dashboard Tab ====== -->
+    <section class="tab-panel" id="panel-dashboard">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-search stat-icon cyan"></i>
+                <span class="stat-value" id="stat-total">0</span>
+                <span class="stat-label">Total Scans</span>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-bug stat-icon red"></i>
+                <span class="stat-value" id="stat-threats">0</span>
+                <span class="stat-label">Threats Found</span>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-check-circle stat-icon green"></i>
+                <span class="stat-value" id="stat-safe">0</span>
+                <span class="stat-label">Safe Results</span>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-envelope stat-icon purple"></i>
+                <span class="stat-value" id="stat-emails">0</span>
+                <span class="stat-label">Emails Analyzed</span>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <div class="history-section">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+                    <h3 style="margin-bottom:0;"><i class="fas fa-clock-rotate-left"></i> Recent Scans</h3>
+                    <button class="clear-btn" id="clear-history-btn">
+                        <i class="fas fa-trash-alt"></i> Clear
+                    </button>
+                </div>
+
+                <div id="history-content">
+                    <div class="empty-state" id="empty-history">
+                        <i class="fas fa-inbox"></i>
+                        <p>No scans yet. Start analyzing URLs or emails!</p>
+                    </div>
+                    <div class="history-table-wrap hidden" id="history-table-wrap">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Input</th>
+                                    <th>Result</th>
+                                    <th>Score</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== Prevention Guide Tab ====== -->
+    <section class="tab-panel" id="panel-prevention">
+        <!-- Prevention Header -->
+        <div class="prev-header">
+            <i class="fas fa-shield-halved prev-header-icon"></i>
+            <h2>Phishing Prevention Guide</h2>
+            <p>Learn how to identify and protect yourself from phishing attacks</p>
+        </div>
+
+        <!-- Prevention Tips Grid -->
+        <div class="prev-grid">
+            <div class="prev-card">
+                <div class="prev-card-icon" style="background:rgba(6,182,212,0.12);color:#06b6d4;"><i class="fas fa-link"></i></div>
+                <h3>Verify URLs Before Clicking</h3>
+                <p>Always hover over links to see the actual URL. Phishing links often use misspelled domains like <code>paypa1.com</code> instead of <code>paypal.com</code>. Use PhishGuard's URL Scanner to check any suspicious link before visiting.</p>
+                <div class="prev-action">🛡️ Prevention: Use URL Scanner tab to verify</div>
+            </div>
+
+            <div class="prev-card">
+                <div class="prev-card-icon" style="background:rgba(139,92,246,0.12);color:#8b5cf6;"><i class="fas fa-envelope-circle-check"></i></div>
+                <h3>Analyze Suspicious Emails</h3>
+                <p>Phishing emails use urgency ("act now!"), threats ("account suspended"), and fake rewards ("you won!") to trick you. Paste suspicious emails into PhishGuard's Email Analyzer to get an objective risk score.</p>
+                <div class="prev-action">🛡️ Prevention: Use Email Analyzer tab to scan</div>
+            </div>
+
+            <div class="prev-card">
+                <div class="prev-card-icon" style="background:rgba(236,72,153,0.12);color:#ec4899;"><i class="fas fa-lock"></i></div>
+                <h3>Check SSL Certificates</h3>
+                <p>A padlock icon alone does NOT mean a site is safe. Free SSL certificates are available to anyone — including phishers. PhishGuard verifies the certificate <strong>issuer</strong> and <strong>expiration</strong> to detect fakes.</p>
+                <div class="prev-action">🛡️ Prevention: SSL details shown in URL Scanner results</div>
+            </div>
+
+            <div class="prev-card">
+                <div class="prev-card-icon" style="background:rgba(34,197,94,0.12);color:#22c55e;"><i class="fas fa-arrows-split-up-and-left"></i></div>
+                <h3>Expand Shortened URLs</h3>
+                <p>Never click shortened links (bit.ly, tinyurl) without checking where they lead. Attackers hide malicious sites behind shorteners. PhishGuard automatically expands and analyzes the real destination.</p>
+                <div class="prev-action">🛡️ Prevention: Auto-expanded in URL Scanner</div>
+            </div>
+
+            <div class="prev-card">
+                <div class="prev-card-icon" style="background:rgba(251,146,60,0.12);color:#fb923c;"><i class="fas fa-clock"></i></div>
+                <h3>Check Domain Age</h3>
+                <p>70% of phishing websites are registered less than 30 days before the attack. A brand-new domain claiming to be your bank is almost certainly a scam. PhishGuard checks domain age via real-time WHOIS lookups.</p>
+                <div class="prev-action">🛡️ Prevention: Domain age shown in URL Scanner results</div>
+            </div>
+
+            <div class="prev-card">
+                <div class="prev-card-icon" style="background:rgba(239,68,68,0.12);color:#ef4444;"><i class="fas fa-key"></i></div>
+                <h3>Enable Two-Factor Authentication</h3>
+                <p>Even if your password is stolen through phishing, 2FA adds an extra barrier. Use authenticator apps (Google Authenticator, Authy) instead of SMS-based 2FA for stronger protection.</p>
+                <div class="prev-action">🛡️ Prevention: Enable 2FA on all important accounts</div>
+            </div>
+
+            <div class="prev-card">
+                <div class="prev-card-icon" style="background:rgba(14,165,233,0.12);color:#0ea5e9;"><i class="fas fa-user-secret"></i></div>
+                <h3>Never Share Credentials via Email</h3>
+                <p>Legitimate organizations will <strong>never</strong> ask for your password, credit card, or SSN via email. If an email asks you to "verify your account" by entering credentials, it's phishing.</p>
+                <div class="prev-action">🛡️ Prevention: Email Analyzer detects credential requests</div>
+            </div>
+
+            <div class="prev-card">
+                <div class="prev-card-icon" style="background:rgba(168,85,247,0.12);color:#a855f7;"><i class="fas fa-flag"></i></div>
+                <h3>Report Phishing Attempts</h3>
+                <p>Report suspicious emails and URLs to your IT department, email provider (mark as phishing), and organizations like <a href="https://www.phishtank.com" target="_blank" style="color:#06b6d4;">PhishTank</a>. Reporting helps protect others.</p>
+                <div class="prev-action">🛡️ Prevention: Export PDF reports for documentation</div>
+            </div>
+
+            <div class="prev-card">
+                <div class="prev-card-icon" style="background:rgba(20,184,166,0.12);color:#14b8a6;"><i class="fas fa-building-shield"></i></div>
+                <h3>Audit URLs in Bulk (Organizations)</h3>
+                <p>IT teams should regularly scan URLs from employee reports, partner communications, and marketing campaigns. PhishGuard's Bulk Scanner processes up to 20 URLs at once with exportable reports.</p>
+                <div class="prev-action">🛡️ Prevention: Use Bulk Scan tab for audits</div>
+            </div>
+
+            <div class="prev-card">
+                <div class="prev-card-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b;"><i class="fas fa-graduation-cap"></i></div>
+                <h3>Stay Educated & Updated</h3>
+                <p>Phishing tactics evolve constantly. Stay informed about new attack methods through security blogs, training programs, and tools like PhishGuard. Awareness is the strongest defense.</p>
+                <div class="prev-action">🛡️ Prevention: Bookmark this guide for reference</div>
+            </div>
+        </div>
+
+        <!-- Phishing Quiz: Real vs Fake URLs -->
+        <div class="glass-card" style="margin-top:1.5rem;">
+            <h3 style="color:var(--text-primary);margin-bottom:0.3rem;"><i class="fas fa-graduation-cap" style="color:#f59e0b;"></i> Phishing Quiz — Can You Spot the Fake?</h3>
+            <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1.2rem;">Click on the URL you think is the REAL one in each pair. This trains your eye to spot phishing URLs.</p>
+
+            <div class="quiz-container" id="quiz-container">
+                <!-- Quiz 1 -->
+                <div class="quiz-pair" data-answer="a">
+                    <div class="quiz-label">Round 1: PayPal</div>
+                    <button class="quiz-option" data-choice="a" onclick="checkQuiz(this,'a','a')"><i class="fas fa-globe"></i> https://www.paypal.com/login</button>
+                    <button class="quiz-option" data-choice="b" onclick="checkQuiz(this,'b','a')"><i class="fas fa-globe"></i> https://www.paypa1-secure.com/login</button>
+                </div>
+                <!-- Quiz 2 -->
+                <div class="quiz-pair" data-answer="b">
+                    <div class="quiz-label">Round 2: Google</div>
+                    <button class="quiz-option" data-choice="a" onclick="checkQuiz(this,'a','b')"><i class="fas fa-globe"></i> https://accounts.google.com.verify-now.net/signin</button>
+                    <button class="quiz-option" data-choice="b" onclick="checkQuiz(this,'b','b')"><i class="fas fa-globe"></i> https://accounts.google.com/signin</button>
+                </div>
+                <!-- Quiz 3 -->
+                <div class="quiz-pair" data-answer="a">
+                    <div class="quiz-label">Round 3: Amazon</div>
+                    <button class="quiz-option" data-choice="a" onclick="checkQuiz(this,'a','a')"><i class="fas fa-globe"></i> https://www.amazon.com/your-orders</button>
+                    <button class="quiz-option" data-choice="b" onclick="checkQuiz(this,'b','a')"><i class="fas fa-globe"></i> https://amazon-order-update.com/your-orders</button>
+                </div>
+                <!-- Quiz 4 -->
+                <div class="quiz-pair" data-answer="b">
+                    <div class="quiz-label">Round 4: Microsoft</div>
+                    <button class="quiz-option" data-choice="a" onclick="checkQuiz(this,'a','b')"><i class="fas fa-globe"></i> https://login.microsoftonline.com.account-verify.xyz/</button>
+                    <button class="quiz-option" data-choice="b" onclick="checkQuiz(this,'b','b')"><i class="fas fa-globe"></i> https://login.microsoftonline.com/</button>
+                </div>
+                <!-- Quiz 5 -->
+                <div class="quiz-pair" data-answer="a">
+                    <div class="quiz-label">Round 5: Netflix</div>
+                    <button class="quiz-option" data-choice="a" onclick="checkQuiz(this,'a','a')"><i class="fas fa-globe"></i> https://www.netflix.com/login</button>
+                    <button class="quiz-option" data-choice="b" onclick="checkQuiz(this,'b','a')"><i class="fas fa-globe"></i> https://netflix-billing-update.com/login</button>
+                </div>
+            </div>
+            <div class="quiz-score" id="quiz-score"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        Built with <i class="fas fa-heart" style="color:var(--accent-pink);"></i> using Flask & scikit-learn
+    </footer>
+</div>
+
+<!-- jsPDF for PDF export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="/static/script.js"></script>
+</body>
+</html>
