@@ -27,8 +27,9 @@
 13. [API Endpoints](#12-api-endpoints)
 14. [Prevention Strategies](#13-prevention-strategies)
 15. [Results & Performance](#14-results--performance)
-16. [Future Roadmap](#15-future-roadmap)
-17. [References](#16-references)
+16. [Errors & Challenges Solved](#15-errors--challenges-solved-during-development)
+17. [Future Roadmap](#16-future-roadmap)
+18. [References](#17-references)
 
 ---
 
@@ -692,7 +693,47 @@ User passwords hashed using Werkzeug's `generate_password_hash` (PBKDF2 with SHA
 
 ---
 
-## 15. Future Roadmap
+## 15. Errors & Challenges Solved During Development
+
+### Challenge 1: WHOIS Lookup Failures
+**Problem:** `python-whois` throws exceptions for many domains (new TLDs, privacy-protected domains, rate limiting).
+**Solution:** Wrapped WHOIS lookups in try/except with a fallback default of 1000 days to avoid false positives for legitimate unknown domains.
+
+### Challenge 2: SSL Certificate Verification for Non-HTTPS Sites
+**Problem:** `ssl.create_default_context()` raises errors for HTTP-only sites and unreachable servers.
+**Solution:** Comprehensive error handling with specific error messages for each failure mode (timeout, invalid cert, refused connection).
+
+### Challenge 3: URL Shortener Expansion Timeouts
+**Problem:** Some shortened URLs point to slow or dead servers, causing `requests.head()` to hang indefinitely.
+**Solution:** Added `timeout=8` parameter and specific exception handling for connection timeouts to prevent the application from stalling.
+
+### Challenge 4: Model Loading with scikit-learn Version Mismatch
+**Problem:** `pickle.load()` fails when sklearn versions differ between training and runtime environments.
+**Solution:** Enforced strict versioning `scikit-learn>=1.4.0` in `requirements.txt` and added graceful fallback mechanisms.
+
+### Challenge 5: CORS Issues Between Frontend and Backend
+**Problem:** Browser blocked `fetch()` calls from frontend to backend during development due to CORS policies.
+**Solution:** Integrated `Flask-CORS` to handle cross-origin resource sharing securely and smoothly.
+
+### Challenge 6: Password Confirmation Validation
+**Problem:** Users could accidentally submit mismatched passwords during registration.
+**Solution:** Implemented both client-side (`minlength` and `required` attributes) and strict server-side validation during the signup flow.
+
+### Challenge 7: Session Persistence After Server Restart
+**Problem:** Flask sessions were lost on development server restart because the default secret key changes.
+**Solution:** Configured a persistent, fixed `secret_key` in the Flask app configuration so user sessions persist.
+
+### Challenge 8: Bulk Scanner Error Isolation
+**Problem:** A single failed URL in a bulk scan would crash the entire batch processing pipeline.
+**Solution:** Implemented isolated `try/except` blocks per URL to ensure partial successes are returned independently.
+
+### Challenge 9: Integrating Interactive Prevention Features
+**Problem:** Adding an interactive 5-round phishing quiz required complex state management (tracking scores, rounds, and dynamic UI updates) without relying on a heavy frontend framework like React, to keep the application lightweight.
+**Solution:** Implemented custom vanilla JavaScript logic to handle quiz state and dynamically update DOM elements. Used CSS transitions and JS arrays to cycle through quiz data seamlessly, ensuring real-time feedback (green/red indicators) while maintaining high performance.
+
+---
+
+## 16. Future Roadmap
 
 - [ ] Chrome/Firefox browser extension for real-time protection
 - [ ] Deep learning models (LSTM/Transformer) for URL and email analysis
@@ -706,7 +747,7 @@ User passwords hashed using Werkzeug's `generate_password_hash` (PBKDF2 with SHA
 
 ---
 
-## 16. References
+## 17. References
 
 1. [Study on Phishing Attacks — ResearchGate](https://www.researchgate.net/publication/329716781_Study_on_Phishing_Attacks)
 2. Lee, C. (2024). *Behavioral Threat Detection*. IEEE.

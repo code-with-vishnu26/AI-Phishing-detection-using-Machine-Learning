@@ -782,6 +782,14 @@ for url in urls:
 
 ---
 
+## Challenge 9: Integrating Interactive Prevention Features
+
+**Problem:** Adding an interactive 5-round phishing quiz required complex state management (tracking scores, rounds, and dynamic UI updates) without relying on a heavy frontend framework like React, to keep the application lightweight.
+
+**Solution:** Implemented custom vanilla JavaScript logic to handle quiz state and dynamically update DOM elements. Used CSS transitions and JS arrays to cycle through quiz data seamlessly, ensuring real-time feedback (green/red indicators) while maintaining high performance.
+
+---
+
 # 11. How PhishGuard Differs from Existing Projects
 
 ## Comparison Matrix
